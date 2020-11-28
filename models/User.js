@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const { Schema, model } = require('mongoose');
 
 const UserSchema = new Schema(
@@ -12,10 +13,10 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            // mongoose validation 'must match valid email address'
+            match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
         },
-        // thoughts array of _id values referencing Thought model
-        // friends array of _id values referencing the User model (self reference)
+        thoughts: [{ type: ObjectId, ref: 'Thought' }],
+        friends: [{ type : ObjectId,  ref: 'User' }]
     },
     {
         toJSON: {
