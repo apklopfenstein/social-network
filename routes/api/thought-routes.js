@@ -13,17 +13,23 @@ const {
 router
     .route('/')
     .get(getAllThoughts)
-    .post(createThought)
 
 router
-    .route('/:id')
+    .route('/:thoughtId')
     .get(getThoughtById)
     .put(updateThought)
-    .delete(deleteThought);
+    
+router
+    .route('/:userId')
+    .post(createThought);
 
 router
-    .route('/:thoughtId/reactions')
-    .post(addReaction)
+    .route('/:userId/:thoughtId')
+    .put(addReaction)
+    .delete(deleteThought);
+    
+router
+    .route('/:userId/:thoughtId/:reactionId')
     .delete(deleteReaction);
 
 module.exports = router;
