@@ -1,6 +1,7 @@
 const { User } = require('../models');
 
 const userController = {
+    // Get all users
     getAllUser(req, res) {
         User.find({})
         .select('-__v')
@@ -11,6 +12,7 @@ const userController = {
             res.status(400).json(err);
         });
     },
+    // Get single user
     getUserById({ params }, res) {
         User.findOne({ _id: params.id })
         .populate([{
@@ -34,11 +36,13 @@ const userController = {
                 res.status(400).json(err);
             });
     },
+    // Create a user
     createUser({ body }, res) {
         User.create(body)
             .then(dbUserData => res.json(dbUserData))
             .catch(err => res.status(400).json(err));
     },
+    // Edit a user
     updateUser({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
             .then(dbUserData => {
@@ -50,6 +54,7 @@ const userController = {
             })
             .catch(err => res.status(400).json(err));
     },
+    // Delete a user
     deleteUser({ params }, res) {
         User.findByIdAndDelete({ _id: params.id })
             .then(dbUserData => {
@@ -60,6 +65,32 @@ const userController = {
                 res.json(dbUserData);
             })
             .catch(err => res.status(400).json(err));
+    },
+    // Add a friend to a user
+    addFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $addToSet: { friends: params.friendId } },
+            { new: true, runValidators: true }
+        )
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user found with this id!' });
+                    return;
+                }
+                res.json(dbUserData);
+            })
+            .catch(err => res.json(err));
+    },
+    // Delete a friend from a user
+    deleteFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $pull: { friends: { friendId: params.friendId } } },
+            { new: true }
+        )
+            .then(dbUserData => res.json(dbUserData))
+            .catch(err => res.json(err));
     }
 };
 
