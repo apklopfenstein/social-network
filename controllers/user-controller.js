@@ -2,7 +2,7 @@ const { User } = require('../models');
 
 const userController = {
     // Get all users
-    getAllUser(req, res) {
+    getAllUsers(req, res) {
         User.find({})
         .select('-__v')
         .sort({ _id: -1 })
